@@ -31,4 +31,5 @@ public enum NodeType {
 	INSTR_IF,
 	INSTR_LOOP,
 	INSTR_WHILE_LOOP,
+	INSTR_REPEAT,
 }

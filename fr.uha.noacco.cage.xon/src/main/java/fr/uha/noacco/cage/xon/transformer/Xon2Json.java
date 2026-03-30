@@ -322,4 +322,30 @@ public class Xon2Json extends NodeVisitor {
         setResult(new XonValue().setArray(outputArr));
     }
 
+    @Override
+    public void visit_Repeat(Node node) throws TransformerException {
+        Node countNode = node.getChildren().get(0);
+        Node bodyNode = node.getChildren().get(1);
+
+        visit_Node(countNode);
+        XonValue countVal = getResult();
+        if (countVal.getType() != XonValueType.INTEGER) {
+            throw new TransformerException("Expected an integer as repeat count but got: " + countVal);
+        }
+        int bound = countVal.getInteger();
+
+        List<XonValue> accumulated = new ArrayList<>();
+        for (int i = 0; i < bound; i++) {
+            visit_Node(bodyNode);
+            XonValue partial = fetchTail(getResult());
+            if (partial != null) accumulated.add(partial);
+        }
+
+        JSONArray outputArr = new JSONArray();
+        for (XonValue item : accumulated) {
+            outputArr.put(item.getContent());
+        }
+        setResult(new XonValue().setArray(outputArr));
+    }
+
 }

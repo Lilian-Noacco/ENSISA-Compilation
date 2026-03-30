@@ -129,6 +129,14 @@ iteration   ::= 'for' STRING:v 'in' value:src 'do' value:body
                             : java.util.Arrays.asList(body)
                     );
                 :}
+            |   'repeat' Expr:n 'times' value:body
+                {:
+                    RESULT = getFactory ().createRepeatNode(n,
+                        body.getType() == fr.uha.noacco.cage.xon.model.xon.NodeType.ARRAY
+                            ? body.getChildren()
+                            : java.util.Arrays.asList(body)
+                    );
+                :}
             ;
 
 Expr        ::= STRING:s                       {: RESULT = getFactory ().createStringNode(s); :}
@@ -169,10 +177,14 @@ BOOLVAL     ::= `true`     {: RESULT = Boolean.TRUE; :}
             |   `false`     {: RESULT = Boolean.FALSE; :}
             ;
 
-terminal void EOLN, WHITE;
+terminal void EOLN, WHITE, COMMENT;
 
 EOLN        ::= `\r\n|\r|\n`
             ;
 
 WHITE       ::= `[ \t\f]`
             ;
+
+COMMENT     ::= `"//"[^\r\n]*`
+            ;
+

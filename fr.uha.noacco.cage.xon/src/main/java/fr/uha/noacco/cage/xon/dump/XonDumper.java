@@ -154,4 +154,9 @@ public class XonDumper extends NodeVisitor implements IPrinter {
         visit_AnyNode("WHILE_LOOP", node, "WHILE_LOOP");
     }
 
+    @Override
+    public void visit_Repeat(Node node) throws DumpException {
+        visit_AnyNode("REPEAT", node, "REPEAT");
+    }
+
 }

@@ -236,4 +236,15 @@ public class NodeFactory {
         return node;
     }
 
+    public Node createRepeatNode(Node count, List<Node> body) {
+        Node node = new Node();
+        node.setType(NodeType.INSTR_REPEAT);
+        Node bodyNode = new Node();
+        bodyNode.setType(NodeType.LIST);
+        bodyNode.addNodes(body);
+        node.addNode(count);
+        node.addNode(bodyNode);
+        return node;
+    }
+
 }

@@ -1,0 +1,12 @@
+{
+    // repeat dans un element (array)
+    "stars" : repeat 5 times ["*"],
+    // repeat dans un member (object)
+    "counters" : repeat 3 times [42],
+    // repeat avec expression
+    "computed" : repeat (2 + 3) times [99],
+    // repeat avec variable
+    let "n" = 4,
+    "dynamic" : repeat get "n" times ["hello"]
+}
+
