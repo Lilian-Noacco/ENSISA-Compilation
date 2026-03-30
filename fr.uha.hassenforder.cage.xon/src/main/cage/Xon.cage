@@ -1,0 +1,178 @@
+package fr.uha.hassenforder.cage.xon;
+
+parser import code {:
+import java.util.List;
+import fr.uha.hassenforder.cage.xon.model.xon.Node;
+import fr.uha.hassenforder.cage.xon.model.xon.NodeFactory;
+:}
+
+parser code {:
+    private NodeFactory factory = null;
+
+    public NodeFactory getFactory () {
+        if (factory == null) {
+            factory = new NodeFactory ();
+        }
+        return factory;
+    }
+:}
+
+parser action code {:
+    public NodeFactory getFactory () {
+        return parser.getFactory();
+    }
+:}
+
+terminal String                STRING;
+terminal Integer               INTEGER;
+terminal Double                DECIMAL;
+terminal Boolean               BOOLVAL;
+terminal                       UNARIES;
+
+nonterminal Node               json, object, pair, assign;
+nonterminal Node               array, element;
+nonterminal Node               value;
+nonterminal Node               Expr;
+nonterminal Node               ternary;
+nonterminal Node               iteration;
+nonterminal List<Node>         members, elements;
+
+precedence left '+', '-';
+precedence left '*', '/';
+precedence left '%';
+precedence left '==', '!=';
+precedence left '<', '<=', '>', '>=';
+precedence right UNARIES;
+
+start with json;
+
+json        ::= object:o
+                {:
+                    RESULT = getFactory ().createJsonNode(o);
+                :}
+            ;
+
+object      ::= '{' members:list '}'
+                {:
+                    RESULT = getFactory ().createObjectNode(list);
+                :}
+            ;
+
+members     ::= pair:f ( ',' pair:n {: RESULT = n; :} ) *:list
+                {:
+                    list.add(0, f);
+                    RESULT = list;
+                :}
+            ;
+
+pair        ::= STRING:n ':' value:v
+                {:
+                    RESULT = getFactory ().createPairNode(n, v);
+                :}
+            |   assign:a
+                {:
+                    RESULT = a;
+                :}
+            ;
+
+value       ::= object:o           {: RESULT = o; :}
+            |   Expr:e              {: RESULT = e; :}
+            ;
+
+array       ::= '[' elements:list ']'
+                {:
+                    RESULT = getFactory ().createArrayNode(list);
+                :}
+            ;
+
+elements    ::= element:f ( ',' element:n {: RESULT = n; :} ) *:list
+                {:
+                    list.add(0, f);
+                    RESULT = list;
+                :}
+            ;
+
+element     ::= value:v            {: RESULT = v; :}
+            |   assign:a            {: RESULT = a; :}
+            ;
+
+assign      ::= 'let' STRING:n '=' Expr:v
+                {:
+                    RESULT = getFactory ().createLetNode(n, v);
+                :}
+            |   STRING:n '=' Expr:v
+                {:
+                    RESULT = getFactory ().createLetNode(n, v);
+                :}
+            ;
+
+ternary     ::= 'if' Expr:c 'then' Expr:t 'else' Expr:e
+                {:
+                    RESULT = getFactory ().createIfNode(c, t, e);
+                :}
+            ;
+
+iteration   ::= 'for' STRING:v 'in' value:src 'do' value:body
+                {:
+                    Node srcNode = src;
+                    RESULT = getFactory ().createLoopNode(v, srcNode,
+                        body.getType() == fr.uha.hassenforder.cage.xon.model.xon.NodeType.ARRAY
+                            ? body.getChildren()
+                            : java.util.Arrays.asList(body)
+                    );
+                :}
+            |   'while' Expr:c 'do' value:body
+                {:
+                    RESULT = getFactory ().createWhileLoopNode(c,
+                        body.getType() == fr.uha.hassenforder.cage.xon.model.xon.NodeType.ARRAY
+                            ? body.getChildren()
+                            : java.util.Arrays.asList(body)
+                    );
+                :}
+            ;
+
+Expr        ::= STRING:s                       {: RESULT = getFactory ().createStringNode(s); :}
+            |   Expr:a '+' Expr:b               {: RESULT = getFactory ().createAddNode(a, b); :}
+            |   Expr:a '-' Expr:b               {: RESULT = getFactory ().createSubNode(a, b); :}
+            |   Expr:a '*' Expr:b               {: RESULT = getFactory ().createMultNode(a, b); :}
+            |   Expr:a '/' Expr:b               {: RESULT = getFactory ().createDivNode(a, b); :}
+            |   Expr:a '%' Expr:b               {: RESULT = getFactory ().createModNode(a, b); :}
+            |   Expr:a '==' Expr:b              {: RESULT = getFactory ().createEqNode(a, b); :}
+            |   Expr:a '!=' Expr:b              {: RESULT = getFactory ().createNeqNode(a, b); :}
+            |   Expr:a '<' Expr:b               {: RESULT = getFactory ().createLtNode(a, b); :}
+            |   Expr:a '>' Expr:b               {: RESULT = getFactory ().createGtNode(a, b); :}
+            |   Expr:a '<=' Expr:b              {: RESULT = getFactory ().createLteNode(a, b); :}
+            |   Expr:a '>=' Expr:b              {: RESULT = getFactory ().createGteNode(a, b); :}
+            |   '(' Expr:e ')'                  {: RESULT = e; :}
+            |   '-' Expr:e                      {: RESULT = getFactory ().createUnaryMinusNode(e); :} %prec UNARIES
+            |   '+' Expr:e                      {: RESULT = getFactory ().createUnaryPlusNode(e); :} %prec UNARIES
+            |   DECIMAL:d                       {: RESULT = getFactory ().createRealNode(d); :}
+            |   INTEGER:i                       {: RESULT = getFactory ().createIntegerNode(i); :}
+            |   BOOLVAL:b                       {: RESULT = getFactory ().createBoolNode(b); :}
+            |   ternary:t                       {: RESULT = t; :}
+            |   iteration:it                    {: RESULT = it; :}
+            |   array:a                         {: RESULT = a; :}
+            |   'get' STRING:n                  {: RESULT = getFactory ().createGetNode(n); :}
+            ;
+
+STRING      ::= `\"[^\"]*\"`   {: RESULT = new String( zzBuffer, zzStartRead+1, zzMarkedPos-zzStartRead-2 ); :}
+            ;
+
+INTEGER     ::= `[0-9]+`
+            ;
+
+DECIMAL     ::= `[0-9]+("."[0-9]+)?[eE][+-]?[0-9]+`
+            |   `[0-9]*"."[0-9]+([eE][+-]?[0-9]+)?`
+            ;
+
+BOOLVAL     ::= `true`     {: RESULT = Boolean.TRUE; :}
+            |   `false`     {: RESULT = Boolean.FALSE; :}
+            ;
+
+terminal void EOLN, WHITE;
+
+EOLN        ::= `\r\n|\r|\n`
+            ;
+
+WHITE       ::= `[ \t\f]`
+            ;

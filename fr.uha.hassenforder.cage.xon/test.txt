@@ -1,0 +1,47 @@
+{
+    "animal" : "dolphin",
+    "enabled" : true,
+    "scores" : [
+        "17",
+        "93",
+        {
+            "level": "advanced gold",
+            "rank": "elite silver"
+        }
+    ],
+    "location" : {
+        "code" : "75001",
+        "region" : {
+            "label": "lyon"
+        }
+    },
+    "signal" : if true then "high" else "low",
+    "check_gt_ab" : if 12 > 5 then "12 surpasses 5" else "12 behind 5",
+    "check_gt_cd" : if 2 > 11 then "2 surpasses 11" else "2 behind 11",
+    "equal_mn" : if 9 == 9 then "9 equals 9" else "9 not equal 9",
+    "equal_mp" : if 9 == 14 then "9 equals 14" else "9 not equal 14",
+    "notequal_rs" : if 6 != 11 then "6 apart from 11" else "6 same as 11",
+    "notequal_rr" : if 6 != 6 then "6 apart from 6" else "6 same as 6",
+    "bool_verify" : if true == false then "true same as false" else "true apart from false",
+    "leq_check" : if 3 <= 14 then "3 within 14" else "3 beyond 14",
+    "geq_check" : if 3 >= 14 then "3 covers 14" else "3 under 14",
+    "lt_check" : if 1 < 10 then "1 below 10" else "1 not below 10",
+    let "tracker" = 200,
+    "tracker" = 999,
+    "fetch_tracker" : get "tracker",
+    "bundle" : [55, 66, 77, 88, get "tracker"],
+    let "series" = [15, 25, 35, 45, 55],
+    "walk_entries" : for "elem" in [4, 3, 2, "zbar"] do [get "elem"],
+    let "idx" = 0,
+    "gather" : while get "idx" < 5 do ["idx" = get "idx" + 1, get "idx"],
+    "read_series" : for "elem" in get "series" do [get "elem"],
+    "pick_series" : for "elem" in get "series" do [if (get "elem" - 30) > 0 then get "elem" else get "elem" * 100],
+    "leftover" : 37 % 9,
+    let "down" = -58,
+    "reveal_down" : get "down",
+    "invert_down" : - get "down",
+    "retain_down" : + get "down",
+    let "up" = +73,
+    "tag_up" : "up = " + get "up",
+    "reverse_up" : - get "up"
+}
