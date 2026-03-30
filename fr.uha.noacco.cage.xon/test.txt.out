@@ -1,0 +1,68 @@
+{
+   "lt_check": "1 below 10",
+   "scores": [
+      "17",
+      "93",
+      {
+         "level": "advanced gold",
+         "rank": "elite silver"
+      }
+   ],
+   "invert_down": 58,
+   "enabled": true,
+   "bool_verify": "true apart from false",
+   "walk_entries": [
+      4,
+      3,
+      2,
+      "zbar"
+   ],
+   "tag_up": "up = 73",
+   "signal": "high",
+   "bundle": [
+      55,
+      66,
+      77,
+      88,
+      999
+   ],
+   "pick_series": [
+      1500,
+      2500,
+      35,
+      45,
+      55
+   ],
+   "leftover": 1,
+   "geq_check": "3 under 14",
+   "fetch_tracker": 999,
+   "read_series": [
+      15,
+      25,
+      35,
+      45,
+      55
+   ],
+   "check_gt_ab": "12 surpasses 5",
+   "check_gt_cd": "2 behind 11",
+   "equal_mp": "9 not equal 14",
+   "equal_mn": "9 equals 9",
+   "gather": [
+      1,
+      2,
+      3,
+      4,
+      5
+   ],
+   "retain_down": -58,
+   "reveal_down": -58,
+   "leq_check": "3 within 14",
+   "notequal_rr": "6 same as 6",
+   "reverse_up": -73,
+   "animal": "dolphin",
+   "notequal_rs": "6 apart from 11",
+   "location": {
+      "code": "75001",
+      "region": {"label": "lyon"}
+   }
+}
