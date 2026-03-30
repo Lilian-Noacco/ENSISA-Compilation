@@ -1,9 +1,9 @@
-package fr.uha.hassenforder.cage.xon;
+package fr.uha.noacco.cage.xon;
 
 parser import code {:
 import java.util.List;
-import fr.uha.hassenforder.cage.xon.model.xon.Node;
-import fr.uha.hassenforder.cage.xon.model.xon.NodeFactory;
+import fr.uha.noacco.cage.xon.model.xon.Node;
+import fr.uha.noacco.cage.xon.model.xon.NodeFactory;
 :}
 
 parser code {:
@@ -116,7 +116,7 @@ iteration   ::= 'for' STRING:v 'in' value:src 'do' value:body
                 {:
                     Node srcNode = src;
                     RESULT = getFactory ().createLoopNode(v, srcNode,
-                        body.getType() == fr.uha.hassenforder.cage.xon.model.xon.NodeType.ARRAY
+                        body.getType() == fr.uha.noacco.cage.xon.model.xon.NodeType.ARRAY
                             ? body.getChildren()
                             : java.util.Arrays.asList(body)
                     );
@@ -124,7 +124,7 @@ iteration   ::= 'for' STRING:v 'in' value:src 'do' value:body
             |   'while' Expr:c 'do' value:body
                 {:
                     RESULT = getFactory ().createWhileLoopNode(c,
-                        body.getType() == fr.uha.hassenforder.cage.xon.model.xon.NodeType.ARRAY
+                        body.getType() == fr.uha.noacco.cage.xon.model.xon.NodeType.ARRAY
                             ? body.getChildren()
                             : java.util.Arrays.asList(body)
                     );
